@@ -17,6 +17,7 @@ const posts = [
 
 // Cria uma instância do Express
 const app = express ();
+app.use(express.static("uploads"));
 routes (app);
           // Habilita o parsing de JSON no corpo das requisições
          // app.use(express.json());

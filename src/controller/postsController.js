@@ -1,5 +1,5 @@
 // Importa funções do arquivo de modelo de posts e o módulo fs para manipulação de arquivos
-import { getTodosPosts, criarPost } from "../models/postsModel.js";
+import {getTodosPosts, criarPost, atualizarPost} from "../models/postsModel.js";
 import fs from "fs";
 
 // Função para listar todos os posts
@@ -53,6 +53,36 @@ export async function uploadImagem(req, res) {
 
     // Renomeia o arquivo enviado para o caminho gerado
     fs.renameSync(req.file.path, imagemAtualizada);
+
+    // Retorna o post criado no formato JSON com status 200 (sucesso)
+    res.status(200).json(postCriado);
+  } catch (erro) {
+    // Exibe o erro no console para depuração
+    console.error(erro.message);
+
+    // Retorna um erro 500 (erro do servidor) no formato JSON com uma mensagem
+    res.status(500).json({ "Erro": "Falha na requisicao" });
+  }
+}
+
+export async function atualizarNovoPost(req, res) {
+  // O conteúdo do novo post é obtido do corpo da requisição (req.body)
+  const id = req.params.id;
+  const urlImagem = `http://localhost:3000/${id}.png`;
+  const post = {
+    descricao: req.body.descricao,
+    imgUrl: urlImagem,
+    alt: req.body.alt
+  }
+
+  try {
+    // Chama a função do modelo para criar o post no banco de dados
+    const postCriado = await atualizarPost(id, post);
+
+
+    // Código comentado para renomear a imagem (caso o post tenha imagem associada)
+    // const imagemAtualizada = `uploads/${postCriado.insertedId}.png`;
+    // fs.renameSync(req.file.path, imagemAtualizada);
 
     // Retorna o post criado no formato JSON com status 200 (sucesso)
     res.status(200).json(postCriado);
